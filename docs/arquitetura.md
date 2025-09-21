@@ -5,6 +5,7 @@
 - **Backend (Flask/Python):** expõe endpoints REST; conecta no **SQL Server** via `pyodbc`.
 - **Banco de Dados:** SQL Server Express (10GB), tabelas **Crops** e **Environments** (seeds).
 
+- **OBS:** O simulador é educacional. Cultivos fora da Terra exigem infraestrutura (pressão, temperatura, radiação, água, nutrientes). Os resultados são explicativos, não prescritivos.
 
 ## 2) Tecnologias
 - **Python 3.11+, Flask 3, flask-cors, pyodbc, python-dotenv**.
@@ -42,16 +43,16 @@
 
 O backend lê com `python-dotenv` (`api/config.py`).
 
-## 7) Tratamento de erros e CORS
+## 6) Tratamento de erros e CORS
 - **CORS** habilitado no Flask (`flask-cors`) para permitir que o HTML/JS local consuma a API.
 - Respostas de erro **JSON**: `{ "error": "mensagem" }` para 400/404/500.
 
-## 8) Desempenho e qualidade (MVP)
+## 7) Desempenho e qualidade (MVP)
 - `GET` principais com **P95 < 500 ms** localmente (dados seed).
 - Logs simples para erros no backend (stdout).
 - Estrutura modular: `api/routers/*`, `api/models/*`, `web/`.
 
-## 9) Como rodar (local)
+## 8) Como rodar (local)
 ```bash
 # Windows PowerShell
 cd C:\Users\...\AgroSpace-br
@@ -62,10 +63,10 @@ pip install -r api/requirements.txt
 # Criar DB e rodar schema/seed (via SSMS ou scripts)
 # Depois:
 set FLASK_APP=api.app
-flask run --debug
+flask run --debug```
 
 
-- O simulador é educacional. Cultivos fora da Terra exigem infraestrutura (pressão, temperatura, radiação, água, nutrientes). Os resultados são explicativos, não prescritivos.
 
-## 6) Configuração e variáveis de ambiente
-Arquivo `.env` (baseado em `infra/.env.example`):
+
+
+
