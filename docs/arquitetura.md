@@ -67,6 +67,33 @@ flask run --debug```
 
 
 
+flowchart TB
+    %% Pessoas
+    Admin[/"Administrador\n(Person)"/]
+    User[/"Usuário (Pesquisador/Estudante)\n(Person)"/]
+
+    %% Sistema alvo
+    subgraph AgroSpace[AgroSpace BR\n(Software System)]
+      Note[["Cadastro e comparação de tubérculos\nem ambientes planetários"]]
+    end
+
+    %% Sistemas externos
+    SQL[(SQL Server Express\n(Software System externo)\nCrops, Environments, Medições)]
+    Auth[(Serviço de Autenticação (opcional)\nOIDC/OAuth)]
+    Mail[(Sistema de E-mail (opcional)\nSMTP)]
+
+    %% Relações
+    Admin -->|Usa [HTTPS] via navegador| AgroSpace
+    User  -->|Usa [HTTPS] via navegador| AgroSpace
+
+    AgroSpace <-->|Lê/Grava [pyodbc/T-SQL]| SQL
+    AgroSpace <-->|Autenticação [OIDC/OAuth]| Auth
+    AgroSpace -->|Envia e-mails [SMTP]| Mail
+
+
+
+
+
 
 
 
