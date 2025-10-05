@@ -73,28 +73,33 @@ flask run --debug
 
 ```mermaid
 flowchart TB
-    %% Pessoas
-    Admin[/"Administrador\n(Person)"/]
-    User[/"Usuário (Pesquisador/Estudante)\n(Person)"/]
+  %% --- Pessoas ---
+  Admin["Administrador<br/>(Person)<br/><small>• Cadastra planetas/luas e características<br/>• Cadastra culturas (requisitos ideais)</small>"]
+  User["Usuário (Pesquisador/Estudante)<br/>(Person)<br/><small>• Consulta comparações<br/>• Vê recomendações de ajuste</small>"]
 
-    %% Sistema alvo
-    subgraph AgroSpace[AgroSpace BR\n(Software System)]
-      Note[["Cadastro e comparação de tubérculos\nem ambientes planetários"]]
-    end
+  %% --- Sistema alvo ---
+  subgraph AgroSpaceBR["AgroSpace BR (Software System)"]
+    Desc["Cadastro e comparação de tubérculos/culturas<br/>em ambientes planetários, com recomendações e geração de relatórios"]
+  end
 
-    %% Sistemas externos
-    SQL[(SQL Server Express\n(Software System externo)\nCrops, Environments, Medições)]
-    Auth[(Serviço de Autenticação (opcional)\nOIDC/OAuth)]
-    Mail[(Sistema de E-mail (opcional)\nSMTP)]
+  %% --- Sistemas externos ---
+  SQL[("SQL Server Express<br/>(Software System externo)<br/>Crops, Environments, Medições")]
+  Storage["Armazenamento de Arquivos (opcional)<br/>PDF/CSV de relatórios"]
+  Science["Fonte de Dados Científicos (opcional)<br/>Importa parâmetros ambientais (CSV/API)"]
+  Auth["Serviço de Autenticação (opcional)<br/>OIDC/OAuth"]
 
-    %% Relações
-    Admin -->|Usa [HTTPS] via navegador| AgroSpace
-    User  -->|Usa [HTTPS] via navegador| AgroSpace
+  %% --- Relações ---
+  Admin -->|"Usa [HTTPS] via navegador"| AgroSpaceBR
+  User  -->|"Usa [HTTPS] via navegador"| AgroSpaceBR
 
-    AgroSpace <-->|Lê/Grava [pyodbc/T-SQL]| SQL
-    AgroSpace <-->|Autenticação [OIDC/OAuth]| Auth
-    AgroSpace -->|Envia e-mails [SMTP]| Mail
+  AgroSpaceBR <-->|"Lê/Grava [pyodbc/T-SQL]"| SQL
+  AgroSpaceBR -->|"Exporta/baixa relatórios [PDF/CSV]"| Storage
+  AgroSpaceBR -->|"Importa parâmetros [CSV/API]"| Science
+  AgroSpaceBR <-->|"Autenticação [OIDC/OAuth]"| Auth
 ```
+
+
+
 
 
 
