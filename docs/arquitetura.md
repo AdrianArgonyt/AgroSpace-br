@@ -63,10 +63,15 @@ pip install -r api/requirements.txt
 # Criar DB e rodar schema/seed (via SSMS ou scripts)
 # Depois:
 set FLASK_APP=api.app
-flask run --debug```
+bash
+flask run --debug
+```
 
 
 
+## C4-1: Contexto
+
+```mermaid
 flowchart TB
     %% Pessoas
     Admin[/"Administrador\n(Person)"/]
@@ -89,6 +94,9 @@ flowchart TB
     AgroSpace <-->|Lê/Grava [pyodbc/T-SQL]| SQL
     AgroSpace <-->|Autenticação [OIDC/OAuth]| Auth
     AgroSpace -->|Envia e-mails [SMTP]| Mail
+```
+
+
 
 
 
