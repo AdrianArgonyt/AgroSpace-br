@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSpace BR - Compatibilidade Planetária</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --border-color: #334155;
+            --text-light: #cbd5e1;
+            --text-dark: #94a3b8;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            background-image: url('https://images.pexels.com/photos/1205301/pexels-photo-1205301.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .backdrop-blur-md { backdrop-filter: blur(12px); }
+        .sidebar-item { transition: all 0.2s ease-in-out; }
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            transform: translateX(5px);
+            border-left-color: var(--primary-color);
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            transition: width 0.5s ease-in-out;
+        }
+        .btn-3d {
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 4px 0 #1e3a8a;
+        }
+        .btn-3d:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1e3a8a;
+        }
+        .btn-3d:disabled {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #4b5563;
+            cursor: not-allowed;
+        }
+        .card-enter {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+        .card-enter-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <main id="app-container" class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- Coluna Esquerda: Culturas -->
+        <aside id="crops-sidebar" class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-4 flex flex-col">
+            <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-border-color pb-2">Culturas Terrestres</h2>
+            <div id="crops-list" class="flex-1 overflow-y-auto space-y-2 pr-2">
+                <!-- Itens de cultura serão inseridos aqui pelo JS -->
+                <div class="text-center p-4">Carregando culturas...</div>
+            </div>
+        </aside>
+
+        <!-- Coluna Central: Comparador e Resultados -->
+        <section id="main-content" class="lg:col-span-2 bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-6 flex flex-col items-center">
+            <header class="text-center mb-6">
+                 <h1 class="font-orbitron text-4xl font-bold text-white tracking-wider">AGROSPACE BR</h1>
+                 <p class="text-text-dark mt-2">Análise de Compatibilidade Planetária</p>
+            </header>
+
+            <!-- Área de Comparação -->
+            <div id="comparison-area" class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Detalhes da Cultura Selecionada -->
+                <div id="crop-details" class="min-h-[200px] flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-border-color rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-dark mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18V3H3zm8 12.5a4.5 4.5 0 01-4.5-4.5H11v4.5zm0-6.5H6.5a4.5 4.5 0 014.5-4.5V9.5z"/></svg>
+                    <p class="text-text-dark">Selecione uma cultura na barra lateral esquerda</p>
+                </div>
+                <!-- Detalhes do Ambiente Selecionado -->
+                <div id="environment-details" class="min-h-[200px] flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-border-color rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-dark mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h8a2 2 0 002-2v-1a2 2 0 012-2h1.945C21.43 11 22 10.43 22 9.727V6.273C22 5.57 21.43 5 20.945 5H3.055C2.57 5 2 5.57 2 6.273v3.454C2 10.43 2.57 11 3.055 11z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16a2 2 0 100-4 2 2 0 000 4z" /></svg>
+                    <p class="text-text-dark">Selecione um ambiente na barra lateral direita</p>
+                </div>
+            </div>
+
+            <button id="combine-button" disabled class="w-full max-w-sm font-orbitron text-lg font-bold bg-blue-600 text-white py-3 rounded-lg btn-3d disabled:bg-gray-600 disabled:text-gray-400">
+                COMBINAR
+            </button>
+            
+            <!-- Área de Resultados -->
+            <div id="result-area" class="w-full mt-6">
+                <!-- O cartão de resultado será inserido aqui -->
+            </div>
+        </section>
+
+        <!-- Coluna Direita: Ambientes -->
+        <aside id="environments-sidebar" class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-4 flex flex-col">
+            <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-border-color pb-2">Ambientes Planetários</h2>
+            <div id="environments-list" class="flex-1 overflow-y-auto space-y-2 pr-2">
+                <!-- Itens de ambiente serão inseridos aqui pelo JS -->
+                <div class="text-center p-4">Carregando ambientes...</div>
+            </div>
+        </aside>
+
+    </main>
+
+    <script src="/app.js"></script>
+</body>
+</html>
+
