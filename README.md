@@ -87,12 +87,13 @@ python bootstrap/bootstrap_db.py
 Modo de Desenvolvimento
 
 # Execute o servidor de desenvolvimento do Flask
-flask --app api.app run --debug -p 8113
+flask --app api.app run --debug -p 8114
 
 
-Acesse em: http://localhost:8113
+Acesse em: http://localhost:8114
 
 Modo de Produção
 
 # Execute a aplicação com o waitress
-python -m waitress --listen=0.0.0.0:8113 api.app:app
+python -m waitress --listen=0.0.0.0:8114 api.app:app
+
