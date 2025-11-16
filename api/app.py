@@ -1,30 +1,37 @@
+import sys
 import os
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from pathlib import Path
 
-# Importa os blueprints das rotas
-from api.routers import health, crops, environments, match
+# --- INÍCIO DA CORREÇÃO DE IMPORTAÇÃO ---
+# Adiciona a pasta raiz (AgroSpace-br) ao sys.path
+# Isso garante que o Python encontre o pacote 'api'
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
+# --- FIM DA CORREÇÃO DE IMPORTAÇÃO ---
+
+# CORREÇÃO: Revertendo para importações absolutas
+from api.routers import health, crops, environments, match, auth
 from api.config import get_config
 
 def create_app():
     """Cria e configura a aplicação Flask."""
     
-    # Define o caminho para a pasta 'web' que contém os ficheiros estáticos (index.html, js, imagens)
-    # '../web' significa "subir um nível a partir da pasta 'api' e depois entrar na 'web'"
-    web_folder = (Path(__file__).resolve().parent.parent / 'web').resolve()
+    # Define o caminho para a pasta 'web'
+    web_folder = (ROOT_DIR / 'web').resolve()
     
-    # Cria a instância da aplicação Flask, informando onde estão os ficheiros estáticos
     app = Flask(__name__, static_folder=str(web_folder), static_url_path='/')
     
-    # Habilita o CORS para permitir que o frontend comunique com a API
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    # Registra os blueprints (conjuntos de rotas) na aplicação
+    # Registra os blueprints
     app.register_blueprint(health.bp)
     app.register_blueprint(crops.bp)
     app.register_blueprint(environments.bp)
     app.register_blueprint(match.bp)
+    app.register_blueprint(auth.bp)
 
     @app.route('/')
     def serve_index():
@@ -38,11 +45,11 @@ def create_app():
 
     return app
 
-# Ponto de entrada para servidores WSGI como Gunicorn ou Waitress
+# Ponto de entrada para servidores WSGI
 app = create_app()
 
 if __name__ == '__main__':
-    # Executa a aplicação em modo de depuração se o script for chamado diretamente
+    # Executa a aplicação em modo de depuração
     port = int(get_config('FLASK_PORT', 8114))
     app.run(debug=True, port=port)
 
