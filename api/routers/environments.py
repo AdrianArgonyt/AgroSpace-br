@@ -1,53 +1,68 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request, jsonify
+# CORREÇÃO: Revertendo para importações absolutas
 from api.db import query_all, query_one, execute_non_query
+from api.auth_utils import token_required
+import sys
+import traceback
 
 bp = Blueprint('environments', __name__, url_prefix='/api')
 
 @bp.route('/environments', methods=['GET'])
 def get_environments():
-    """Lista todos os ambientes, com suporte a filtro por nome."""
-    search_query = request.args.get('q', '')
-    
-    if search_query:
-        sql = "SELECT * FROM Environments WHERE Name LIKE ? ORDER BY Name"
-        params = (f'%{search_query}%',)
-    else:
-        sql = "SELECT * FROM Environments ORDER BY Name"
-        params = ()
-        
-    environments = query_all(sql, params)
-    return jsonify(environments)
+    """Busca a lista de todos os ambientes."""
+    try:
+        query = "SELECT * FROM Environments"
+        q_param = request.args.get('q')
+        if q_param:
+            query += f" WHERE Name LIKE ?"
+            params = (f'%{q_param}%',)
+            environments = query_all(query, params)
+        else:
+            environments = query_all(query)
+            
+        return jsonify(environments), 200
+    except Exception as e:
+        print(f"Erro ao buscar ambientes: {e}\n{traceback.format_exc()}", file=sys.stderr)
+        return jsonify({"error": "Ocorreu um erro inesperado no servidor."}), 500
 
 @bp.route('/environments', methods=['POST'])
+@token_required
 def create_environment():
-    """Cria um novo ambiente."""
+    """Cria um novo ambiente (Rota protegida)."""
     data = request.get_json()
-    if not data or not data.get('Name') or not data.get('Type'):
+    
+    if not data or 'Name' not in data or 'Type' not in data:
         return jsonify({"error": "Os campos 'Name' e 'Type' são obrigatórios."}), 400
 
-    sql = """
-        INSERT INTO Environments (Name, Type, Description, ImagePath, TempMinC, TempMaxC, PressureKPa, GravityG, RadiationIndex, SoilPh, SoilType, WaterAvailability, PhotoperiodH, Atmosphere)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    """
-    params = (
-        data.get('Name'),
-        data.get('Type'),
-        data.get('Description'),
-        data.get('ImagePath'),
-        data.get('TempMinC'),
-        data.get('TempMaxC'),
-        data.get('PressureKPa'),
-        data.get('GravityG'),
-        data.get('RadiationIndex'),
-        data.get('SoilPh'),
-        data.get('SoilType'),
-        data.get('WaterAvailability'),
-        data.get('PhotoperiodH'),
-        data.get('Atmosphere')
-    )
-    
-    execute_non_query(sql, params)
-    
-    last_env = query_one("SELECT TOP 1 * FROM Environments ORDER BY Id DESC")
-    return jsonify(last_env), 201
+    try:
+        allowed_columns = [
+            'Name', 'Type', 'TempMinC', 'TempMaxC', 'PressureKPa', 'GravityG',
+            'RadiationIndex', 'SoilPh', 'SoilType', 'WaterAvailability',
+            'PhotoperiodH', 'Atmosphere', 'EvidenceLevel', 'Notes', 'Sources', 'ImagePath'
+        ]
+        
+        columns = []
+        values = []
+        params = []
+        
+        for col in allowed_columns:
+            if col in data and data[col] is not None:
+                columns.append(col)
+                values.append('?')
+                params.append(data[col])
+        
+        if not columns:
+             return jsonify({"error": "Nenhum dado válido fornecido."}), 400
+
+        sql = f"INSERT INTO Environments ({', '.join(columns)}) VALUES ({', '.join(values)})"
+        
+        new_id = execute_non_query(sql, tuple(params))
+        
+        new_env = query_one("SELECT * FROM Environments WHERE Id = ?", (new_id,))
+        
+        return jsonify(new_env), 201
+        
+    except Exception as e:
+        print(f"Erro detalhado ao criar ambiente: {e}\n{traceback.format_exc()}", file=sys.stderr)
+        return jsonify({"error": "Ocorreu um erro inesperado no servidor."}), 500
 
