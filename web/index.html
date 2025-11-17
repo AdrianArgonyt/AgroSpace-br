@@ -26,6 +26,7 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            overflow-y: scroll;
         }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         .backdrop-blur-md { backdrop-filter: blur(12px); }
@@ -39,18 +40,42 @@
             background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             transition: width 0.5s ease-in-out;
         }
-        .btn-3d {
+        .btn-primary {
+            background-color: var(--primary-color);
             transition: all 0.15s ease-in-out;
             box-shadow: 0 4px 0 #1e3a8a;
         }
-        .btn-3d:hover {
+        .btn-primary:hover {
             transform: translateY(2px);
             box-shadow: 0 2px 0 #1e3a8a;
         }
-        .btn-3d:disabled {
+        .btn-primary:disabled {
             transform: translateY(2px);
             box-shadow: 0 2px 0 #4b5563;
             cursor: not-allowed;
+            background-color: #4b5563;
+        }
+        .btn-secondary {
+             background-color: #4b5563;
+             transition: all 0.15s ease-in-out;
+             box-shadow: 0 4px 0 #1e293b;
+        }
+        .btn-secondary:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1e293b;
+            background-color: #5a6574;
+        }
+        .form-input {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-light);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
         }
         .card-enter {
             opacity: 0;
@@ -63,60 +88,192 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body class="min-h-screen flex flex-col p-4">
 
-    <main id="app-container" class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        <!-- Coluna Esquerda: Culturas -->
-        <aside id="crops-sidebar" class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-4 flex flex-col">
-            <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-border-color pb-2">Culturas Terrestres</h2>
-            <div id="crops-list" class="flex-1 overflow-y-auto space-y-2 pr-2">
-                <!-- Itens de cultura serão inseridos aqui pelo JS -->
-                <div class="text-center p-4">Carregando culturas...</div>
-            </div>
-        </aside>
+    <!-- Cabeçalho de Navegação Principal -->
+    <header class="w-full max-w-7xl mx-auto mb-4 flex justify-between items-center">
+        <div class="text-left">
+            <h1 class="font-orbitron text-3xl font-bold text-white tracking-wider">AGROSPACE BR</h1>
+            <p class="text-text-dark">Análise de Compatibilidade Planetária</p>
+        </div>
+        <nav id="main-nav" class="flex gap-4"></nav>
+    </header>
 
-        <!-- Coluna Central: Comparador e Resultados -->
-        <section id="main-content" class="lg:col-span-2 bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-6 flex flex-col items-center">
-            <header class="text-center mb-6">
-                 <h1 class="font-orbitron text-4xl font-bold text-white tracking-wider">AGROSPACE BR</h1>
-                 <p class="text-text-dark mt-2">Análise de Compatibilidade Planetária</p>
-            </header>
-
-            <!-- Área de Comparação -->
-            <div id="comparison-area" class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Detalhes da Cultura Selecionada -->
-                <div id="crop-details" class="min-h-[200px] flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-border-color rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-dark mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18V3H3zm8 12.5a4.5 4.5 0 01-4.5-4.5H11v4.5zm0-6.5H6.5a4.5 4.5 0 014.5-4.5V9.5z"/></svg>
-                    <p class="text-text-dark">Selecione uma cultura na barra lateral esquerda</p>
-                </div>
-                <!-- Detalhes do Ambiente Selecionado -->
-                <div id="environment-details" class="min-h-[200px] flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-border-color rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-dark mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h8a2 2 0 002-2v-1a2 2 0 012-2h1.945C21.43 11 22 10.43 22 9.727V6.273C22 5.57 21.43 5 20.945 5H3.055C2.57 5 2 5.57 2 6.273v3.454C2 10.43 2.57 11 3.055 11z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16a2 2 0 100-4 2 2 0 000 4z" /></svg>
-                    <p class="text-text-dark">Selecione um ambiente na barra lateral direita</p>
-                </div>
-            </div>
-
-            <button id="combine-button" disabled class="w-full max-w-sm font-orbitron text-lg font-bold bg-blue-600 text-white py-3 rounded-lg btn-3d disabled:bg-gray-600 disabled:text-gray-400">
-                COMBINAR
-            </button>
-            
-            <!-- Área de Resultados -->
-            <div id="result-area" class="w-full mt-6">
-                <!-- O cartão de resultado será inserido aqui -->
-            </div>
-        </section>
-
-        <!-- Coluna Direita: Ambientes -->
-        <aside id="environments-sidebar" class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-4 flex flex-col">
-            <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-border-color pb-2">Ambientes Planetários</h2>
-            <div id="environments-list" class="flex-1 overflow-y-auto space-y-2 pr-2">
-                <!-- Itens de ambiente serão inseridos aqui pelo JS -->
-                <div class="text-center p-4">Carregando ambientes...</div>
-            </div>
-        </aside>
-
+    <!-- (NOVO) Container principal onde as "telas" serão renderizadas -->
+    <main id="app-root" class="w-full max-w-7xl mx-auto flex-1">
+        <!-- O JavaScript irá popular esta área com base na tela atual -->
     </main>
+    
+    <!-- Rodapé -->
+    <footer class="w-full max-w-7xl mx-auto mt-4 text-center">
+        <p class="text-xs text-text-dark">MVP Educacional - Adrian Lucas</p>
+    </footer>
+
+
+    <!-- ######################################################## -->
+    <!-- (NOVO) TEMPLATES DE TELAS -->
+    <!-- ######################################################## -->
+
+    <!-- Template: Tela de Simulação (a principal) -->
+    <template id="view-simulation">
+        <div class="w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Coluna Esquerda: Culturas -->
+            <aside id="crops-sidebar" class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-4 flex flex-col min-h-[70vh]">
+                <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-border-color pb-2">Culturas Terrestres</h2>
+                <ul id="crops-list" class="flex-1 overflow-y-auto space-y-2 pr-2">
+                    <li class="text-center p-4">Carregando culturas...</li>
+                </ul>
+            </aside>
+    
+            <!-- Coluna Central: Comparador -->
+            <section id="main-content" class="lg:col-span-2 bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-6 flex flex-col items-center">
+                <!-- Área de Comparação -->
+                <div id="comparison-area" class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Detalhes da Cultura Selecionada -->
+                    <div id="crop-details" class="min-h-[200px] flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-border-color rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-dark mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18V3H3zm8 12.5a4.5 4.5 0 01-4.5-4.5H11v4.5zm0-6.5H6.5a4.5 4.5 0 014.5-4.5V9.5z"/></svg>
+                        <p class="text-text-dark">Selecione uma cultura</p>
+                    </div>
+                    <!-- Detalhes do Ambiente Selecionado -->
+                    <div id="environment-details" class="min-h-[200px] flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-border-color rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-text-dark mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h8a2 2 0 002-2v-1a2 2 0 012-2h1.945C21.43 11 22 10.43 22 9.727V6.273C22 5.57 21.43 5 20.945 5H3.055C2.57 5 2 5.57 2 6.273v3.454C2 10.43 2.57 11 3.055 11z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16a2 2 0 100-4 2 2 0 000 4z" /></svg>
+                        <p class="text-text-dark">Selecione um ambiente</p>
+                    </div>
+                </div>
+                <button id="combine-button" disabled class="w-full max-w-sm font-orbitron text-lg font-bold text-white py-3 rounded-lg btn-primary disabled:opacity-50">
+                    COMBINAR
+                </button>
+            </section>
+    
+            <!-- Coluna Direita: Ambientes -->
+            <aside id="environments-sidebar" class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-4 flex flex-col min-h-[70vh]">
+                <h2 class="font-orbitron text-xl font-bold mb-4 text-center border-b border-border-color pb-2">Ambientes Planetários</h2>
+                <ul id="environments-list" class="flex-1 overflow-y-auto space-y-2 pr-2">
+                    <li class="text-center p-4">Carregando ambientes...</li>
+                </ul>
+            </aside>
+        </div>
+    </template>
+
+    <!-- Template: Tela de Resultado -->
+    <template id="view-result">
+         <section class="w-full max-w-4xl mx-auto bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-6 lg:p-10 card-enter">
+            <!-- O JS irá popular este conteúdo -->
+         </section>
+    </template>
+
+    <!-- Template: Tela de Login -->
+    <template id="view-login">
+        <section class="w-full max-w-md mx-auto bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-8 card-enter">
+            <h2 class="font-orbitron text-2xl font-bold text-center mb-6">Acesso Administrativo</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-bold mb-2">Usuário</label>
+                    <input type="text" id="login-username" name="username" class="w-full form-input" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-bold mb-2">Senha</label>
+                    <input type="password" id="login-password" name="password" class="w-full form-input" required>
+                </div>
+                <button type="submit" class="w-full font-orbitron text-lg font-bold text-white py-3 rounded-lg btn-primary">
+                    ENTRAR
+                </button>
+                <div id="login-error" class="text-red-400 text-sm text-center"></div>
+                 <p class="text-center text-sm text-text-dark">
+                    Não tem uma conta? 
+                    <button type="button" id="nav-to-register" class="text-primary-color hover:underline">Registe-se aqui</button>
+                </p>
+            </form>
+        </section>
+    </template>
+
+    <!-- Template: Tela de Registro -->
+    <template id="view-register">
+        <section class="w-full max-w-md mx-auto bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-8 card-enter">
+            <h2 class="font-orbitron text-2xl font-bold text-center mb-6">Registar Novo Usuário</h2>
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-bold mb-2">Usuário</label>
+                    <input type="text" id="register-username" name="username" class="w-full form-input" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-bold mb-2">Senha (mín. 6 caracteres)</label>
+                    <input type="password" id="register-password" name="password" class="w-full form-input" required>
+                </div>
+                <button type="submit" class="w-full font-orbitron text-lg font-bold text-white py-3 rounded-lg btn-primary">
+                    REGISTAR
+                </button>
+                <div id="register-message" class="text-sm text-center"></div>
+                 <p class="text-center text-sm text-text-dark">
+                    Já tem uma conta? 
+                    <button type="button" id="nav-to-login" class="text-primary-color hover:underline">Entre aqui</button>
+                </p>
+            </form>
+        </section>
+    </template>
+
+    <!-- Template: Tela de Admin -->
+    <template id="view-admin">
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Coluna: Cadastrar Cultura -->
+            <section class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-6 card-enter">
+                <h2 class="font-orbitron text-2xl font-bold text-center mb-6">Cadastrar Nova Cultura</h2>
+                <form id="form-create-crop" class="space-y-3">
+                    <input type="text" name="CommonName" placeholder="Nome Comum (ex: Mandioca)" class="w-full form-input" required>
+                    <input type="text" name="ScientificName" placeholder="Nome Científico (ex: Manihot esculenta)" class="w-full form-input">
+                    <input type="text" name="ImagePath" placeholder="URL da Imagem (ex: .../mandioca.png)" class="w-full form-input">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" step="0.1" name="TempMinC" placeholder="Temp. Mín °C" class="w-full form-input">
+                        <input type="number" step="0.1" name="TempMaxC" placeholder="Temp. Máx °C" class="w-full form-input">
+                    </div>
+                     <div class="grid grid-cols-2 gap-2">
+                        <input type="number" step="0.1" name="PhMin" placeholder="pH Mínimo" class="w-full form-input">
+                        <input type="number" step="0.1" name="PhMax" placeholder="pH Máximo" class="w-full form-input">
+                    </div>
+                     <div class="grid grid-cols-2 gap-2">
+                        <input type="number" step="0.1" name="PhotoperiodMinH" placeholder="Fotoperíodo Mín h/dia" class="w-full form-input">
+                        <input type="number" step="0.1" name="PhotoperiodMaxH" placeholder="Fotoperíodo Máx h/dia" class="w-full form-input">
+                    </div>
+                    <select name="WaterNeed" class="w-full form-input">
+                        <option value="media">Necessidade de Água: Média</option>
+                        <option value="baixa">Necessidade de Água: Baixa</option>
+                        <option value="alta">Necessidade de Água: Alta</option>
+                    </select>
+                    <button type="submit" class="w-full font-orbitron text-lg font-bold text-white py-3 rounded-lg btn-primary">
+                        SALVAR CULTURA
+                    </button>
+                    <div id="crop-form-message" class="text-sm text-center"></div>
+                </form>
+            </section>
+            
+            <!-- Coluna: Cadastrar Ambiente -->
+            <section class="bg-bg-panel/80 backdrop-blur-md border border-border-color rounded-lg p-6 card-enter" style="animation-delay: 100ms;">
+                <h2 class="font-orbitron text-2xl font-bold text-center mb-6">Cadastrar Novo Ambiente</h2>
+                <form id="form-create-env" class="space-y-3">
+                    <input type="text" name="Name" placeholder="Nome do Ambiente (ex: Marte)" class="w-full form-input" required>
+                    <input type="text" name="Type" placeholder="Tipo (ex: Planetário, Analógico)" class="w-full form-input" required>
+                    <input type="text" name="ImagePath" placeholder="URL da Imagem (ex: .../marte.png)" class="w-full form-input">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" step="0.1" name="TempMinC" placeholder="Temp. Mín °C" class="w-full form-input">
+                        <input type="number" step="0.1" name="TempMaxC" placeholder="Temp. Máx °C" class="w-full form-input">
+                    </div>
+                    <input type="number" step="0.1" name="PressureKPa" placeholder="Pressão (kPa)" class="w-full form-input">
+                    <input type="number" step="0.1" name="SoilPh" placeholder="pH do Solo" class="w-full form-input">
+                    <input type="number" step="0.1" name="PhotoperiodH" placeholder="Fotoperíodo (h/dia)" class="w-full form-input">
+                    <select name="WaterAvailability" class="w-full form-input">
+                        <option value="baixa">Disponibilidade de Água: Baixa</Voption>
+                        <option value="media">Disponibilidade de Água: Média</option>
+                        <option value="alta">Disponibilidade de Água: Alta</option>
+                    </select>
+                    <button type="submit" class="w-full font-orbitron text-lg font-bold text-white py-3 rounded-lg btn-primary">
+                        SALVAR AMBIENTE
+                    </button>
+                    <div id="env-form-message" class="text-sm text-center"></div>
+                </form>
+            </section>
+        </div>
+    </template>
+
 
     <script src="/app.js"></script>
 </body>
