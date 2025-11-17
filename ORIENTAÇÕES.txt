@@ -1,0 +1,47 @@
+CRIA VARÍAVEIS DO AMBIENTE
+
+
+$Env:GITHUB_USER = "AdrianArgony"          # ex.: adrian-xyz
+$Env:GITHUB_TOKEN = "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"   # seu PAT com escopo 'repo'
+$RepoName = "AgroSpace-br"
+$LocalPath = "C:\Users\Administrator\Documents\AgroSpaceBR\$RepoName"
+
+
+
+SOBE PARA O GITHUB
+
+function Upload-File {
+>>   param(
+>>     [string]$FullPath,
+>>     [string]$RelPath,
+>>     $Headers,
+>>     [string]$RepoOwner,
+>>     [string]$RepoName
+>>   )
+>>
+>>   $RelUrl = $RelPath -replace '\\','/'
+>>   $getUri = "https://api.github.com/repos/$RepoOwner/$RepoName/contents/$RelUrl"
+>>
+>>   # Verifica se já existe (para obter o SHA)
+>>   $sha = $null
+>>   try {
+>>     $existing = Invoke-RestMethod -Method GET -Uri $getUri -Headers $Headers
+>>     $sha = $existing.sha
+>>   } catch {
+>>     if ($_.Exception.Response -and $_.Exception.Response.StatusCode.Value__ -ne 404) { throw }
+>>   }
+>>
+>>   $bytes   = [IO.File]::ReadAllBytes($FullPath)
+>>   $content = [Convert]::ToBase64String($bytes)
+>>
+>>   if ($sha) { $msg = "update $RelPath" } else { $msg = "add $RelPath" }
+>>
+>>   $putBody = @{
+>>     message = $msg
+>>     content = $content
+>>   }
+>>   if ($sha) { $putBody.sha = $sha }
+>>
+>>   $putJson = $putBody | ConvertTo-Json -Depth 4 -Compress
+>>   Invoke-RestMethod -Method PUT -Uri $getUri -Headers $Headers -Body $putJson -ContentType "application/json; charset=utf-8" | Out-Null
+>> }
